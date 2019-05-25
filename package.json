@@ -1,0 +1,23 @@
+{
+  "name": "it-projects-crud-server",
+  "version": "1.0.0",
+  "description": "Node.js data-driven CRUD microservice, that allows you to manage IT projects, and use as the data source, SQLite3.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BogdanDrumesi10/it-projects-crud-server.git"
+  },
+  "keywords": [
+    "crud",
+    "server"
+  ],
+  "author": "Drumesi Bogdan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BogdanDrumesi10/it-projects-crud-server/issues"
+  },
+  "homepage": "https://github.com/BogdanDrumesi10/it-projects-crud-server#readme"
+}
