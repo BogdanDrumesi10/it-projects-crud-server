@@ -13,16 +13,17 @@ exports.db = db;
 
 function createTableIfNotExists() {
     // CREATE DATABASE TABLE
-    db.run('CREATE TABLE IF NOT EXISTS it_projects (' +
-        'project_id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-        'project_name TEXT NOT NULL,' +
-        'start_date INTEGER NOT NULL,' +
-        'target_end_date INTEGER NOT NULL,' +
-        'actual_end_date INTEGER NOT NULL,' +
-        'created_on INTEGER NOT NULL,' +
-        'created_by TEXT NOT NULL,' +
-        'modified_on INTEGER NOT NULL,' +
-        'modified_by TEXT NOT NULL)');
+    db.run(`CREATE TABLE IF NOT EXISTS it_projects (
+        project_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        project_name TEXT NOT NULL,
+        start_date INTEGER NOT NULL,
+        target_end_date INTEGER NOT NULL,
+        actual_end_date INTEGER NOT NULL,
+        created_on INTEGER NOT NULL,
+        created_by TEXT NOT NULL,
+        modified_on INTEGER NOT NULL,
+        modified_by TEXT NOT NULL
+        )`);
 }
 
 function checkData(obj) {
@@ -111,6 +112,34 @@ exports.insertData = (project_name, start_date, target_end_date, actual_end_date
     }
 };
 
+exports.updateData = (old_project_name, project_name, start_date, target_end_date, actual_end_date,
+    created_on, created_by, modified_on, modified_by) => {
+    let testObj = {
+        project_name: project_name,
+        start_date: start_date,
+        target_end_date: target_end_date,
+        actual_end_date: actual_end_date,
+        created_on: created_on,
+        created_by: created_by,
+        modified_on: modified_on,
+        modified_by: modified_by
+    };
+    if (checkData(testObj) === "OK") {
+        db.run(`UPDATE it_projects SET
+        project_name='${project_name}',
+        start_date=${start_date},
+        target_end_date=${target_end_date},
+        actual_end_date=${actual_end_date},
+        created_on=${created_on},
+        created_by='${created_by}',
+        modified_on=${modified_on},
+        modified_by='${modified_by}'
+        WHERE project_name LIKE '${old_project_name}'`)
+    } else {
+        console.log("Row invalid");
+    }
+};
+
 exports.deleteProject = (project_name) => {
     db.run(`DELETE FROM it_projects WHERE project_name LIKE '${project_name}'`, (err) => {
         if (err) {
@@ -121,15 +150,13 @@ exports.deleteProject = (project_name) => {
     })
 };
 
-exports.printDatabase = () => {
-    console.log(`Pr_id   Pr_name Start_date \t Target_end_date`);
-    db.each(`SELECT *
-           FROM it_projects`, (err, row) => {
+exports.printDatabase = async (res) => {
+    db.all(`SELECT * 
+       FROM it_projects`, (err, rows) => {
         if (err) {
             console.error(err.message);
+            res.send(`Error in showing database`);
         }
-        console.log(row.project_id + '\t' + row.project_name + '\t' + row.start_date + '\t' + row.target_end_date +
-            '\t' + row.actual_end_date + '\t' + row.created_on + '\t' + row.created_by + '\t' +
-            row.modified_on + '\t' + row.modified_by);
+        res.send(rows);
     });
 };
