@@ -22,5 +22,8 @@
   "homepage": "https://github.com/BogdanDrumesi10/it-projects-crud-server#readme",
   "dependencies": {
     "sqlite3": "^4.0.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
   }
 }

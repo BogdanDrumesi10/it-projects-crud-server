@@ -25,6 +25,44 @@ function createTableIfNotExists() {
         'modified_by TEXT NOT NULL)');
 }
 
+function checkData(obj) {
+    if (typeof obj.project_name !== 'string') {
+        console.log("Project_name is not a string");
+        return "NOK";
+    }
+    if (typeof obj.start_date !== 'number') {
+        console.log("Start_date is not a number");
+        return "NOK";
+    }
+    if (typeof obj.target_end_date !== 'number') {
+        console.log("Target_end_date is not a number");
+        return "NOK";
+    }
+    if (typeof obj.actual_end_date !== 'number') {
+        console.log("Actual_end_date is not a number");
+        return "NOK";
+    }
+    if (typeof obj.created_on !== 'number') {
+        console.log("Created_on is not a number");
+        return "NOK";
+    }
+    if (typeof obj.created_by !== 'string') {
+        console.log("Created_by is not a string");
+        return "NOK";
+    }
+    if (typeof obj.modified_on !== 'number') {
+        console.log("Modified_on is not a number");
+        return "NOK";
+    }
+    if (typeof obj.modified_by !== 'string') {
+        console.log("Modified_by is not a string");
+        return "NOK";
+    }
+
+    console.log("Check data types successfully!");
+    return "OK";
+}
+
 exports.insertDummyData = () => {
     let dummyData = {
         project_name: "Test Project Name",
@@ -37,20 +75,40 @@ exports.insertDummyData = () => {
         modified_by: "Bogdan modifify"
     };
 
-    db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
+    if (checkData(dummyData) === "OK") {
+        db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
             created_on, created_by, modified_on, modified_by) VALUES
             ('${dummyData.project_name}', '${dummyData.start_date}', '${dummyData.target_end_date}',
             '${dummyData.actual_end_date}', '${dummyData.created_on}', '${dummyData.created_by}',
             '${dummyData.modified_on}', '${dummyData.modified_by}')`);
+    } else {
+        console.log("Row invalid");
+    }
+
+
 };
 
 exports.insertData = (project_name, start_date, target_end_date, actual_end_date,
                       created_on, created_by, modified_on, modified_by) => {
-    db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
+    let testObj = {
+        project_name: project_name,
+        start_date: start_date,
+        target_end_date: target_end_date,
+        actual_end_date: actual_end_date,
+        created_on: created_on,
+        created_by: created_by,
+        modified_on: modified_on,
+        modified_by: modified_by
+    };
+    if (checkData(testObj) === "OK") {
+        db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
             created_on, created_by, modified_on, modified_by) VALUES
             ('${project_name}', '${start_date}', '${target_end_date}',
             '${actual_end_date}', '${created_on}', '${created_by}',
             '${modified_on}', '${modified_by}')`);
+    } else {
+        console.log("Row invalid");
+    }
 };
 
 exports.deleteProject = (project_name) => {
