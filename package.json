@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/BogdanDrumesi10/it-projects-crud-server/issues"
   },
-  "homepage": "https://github.com/BogdanDrumesi10/it-projects-crud-server#readme"
+  "homepage": "https://github.com/BogdanDrumesi10/it-projects-crud-server#readme",
+  "dependencies": {
+    "sqlite3": "^4.0.8"
+  }
 }
