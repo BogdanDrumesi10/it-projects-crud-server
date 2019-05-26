@@ -65,30 +65,28 @@ function checkData(obj, res) {
     }
 }
 
-exports.insertDummyData = () => {
-    let dummyData = {
-        project_name: "Test Project Name",
-        start_date: new Date().getTime(),
-        target_end_date: new Date().getTime(),
-        actual_end_date: new Date().getTime(),
-        created_on: new Date().getTime(),
-        created_by: "Bogdan",
-        modified_on: new Date().getTime(),
-        modified_by: "Bogdan modifify"
-    };
-
-    if (checkData(dummyData, null) === "OK") {
-        db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
-            created_on, created_by, modified_on, modified_by) VALUES
-            ('${dummyData.project_name}', '${dummyData.start_date}', '${dummyData.target_end_date}',
-            '${dummyData.actual_end_date}', '${dummyData.created_on}', '${dummyData.created_by}',
-            '${dummyData.modified_on}', '${dummyData.modified_by}')`);
-    } else {
-        console.log("Row invalid");
-    }
-
-
-};
+// exports.insertDummyData = () => {
+//     let dummyData = {
+//         project_name: "Test Project Name",
+//         start_date: new Date().getTime(),
+//         target_end_date: new Date().getTime(),
+//         actual_end_date: new Date().getTime(),
+//         created_on: new Date().getTime(),
+//         created_by: "Bogdan",
+//         modified_on: new Date().getTime(),
+//         modified_by: "Bogdan modifify"
+//     };
+//
+//     if (checkData(dummyData, null) === "OK") {
+//         db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
+//             created_on, created_by, modified_on, modified_by) VALUES
+//             ('${dummyData.project_name}', '${dummyData.start_date}', '${dummyData.target_end_date}',
+//             '${dummyData.actual_end_date}', '${dummyData.created_on}', '${dummyData.created_by}',
+//             '${dummyData.modified_on}', '${dummyData.modified_by}')`);
+//     } else {
+//         console.log("Row invalid");
+//     }
+// };
 
 exports.insertData = (project_name, start_date, target_end_date, actual_end_date,
                       created_on, created_by, modified_on, modified_by, res) => {
@@ -111,13 +109,14 @@ exports.insertData = (project_name, start_date, target_end_date, actual_end_date
             '${modified_on}', '${modified_by}')`, (err) => {
             if (err) {
                 console.log(`Error adding project "${project_name}" ${err}`);
+                res.send(`Error adding project "${project_name}" ${err}`);
             } else {
                 console.log(`Successfully added project "${project_name}"`);
                 res.send(`Successfully added project "${project_name}"`)
             }});
     } else {
         console.log("Row invalid");
-        res.send("Inavlid insert");
+        //res.send("Inavlid insert");
     }
 };
 
@@ -146,6 +145,7 @@ exports.updateData = (old_project_name, project_name, start_date, target_end_dat
         WHERE project_name LIKE '${old_project_name}'`, (err) => {
             if (err) {
                 console.log(`Error updating project "${project_name}" ${err}`);
+                res.send(`Error updating project "${project_name}" ${err}`);
             } else {
                 console.log(`Successfully updated project "${project_name}"`);
                 res.send(`Successfully updated project "${project_name}"`)
@@ -157,7 +157,7 @@ exports.updateData = (old_project_name, project_name, start_date, target_end_dat
 };
 
 exports.deleteProject = (project_name, res) => {
-    db.run(`DELETE FROM it_projects WHERE project_name LIKE '${project_name}'`, (err) => {
+    db.run(`DELETE FROM it_projects WHERE project_name='${project_name}'`, (err) => {
         if (err) {
             console.log(`Error deleting project "${project_name}" ${err}`);
             res.send(`Error deleting project "${project_name}" ${err}`);
@@ -169,7 +169,7 @@ exports.deleteProject = (project_name, res) => {
     })
 };
 
-exports.printDatabase = async (res) => {
+exports.printDatabase = (res) => {
     db.all(`SELECT * 
        FROM it_projects`, (err, rows) => {
         if (err) {

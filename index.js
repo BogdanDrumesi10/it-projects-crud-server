@@ -25,8 +25,8 @@ app.listen(port, () => {
     console.log('Server is up and running on port numner ' + port);
 });
 
-app.get('/', async (req, res) => {
-    await utils.printDatabase(res);
+app.get('/', (req, res) => {
+    utils.printDatabase(res);
 });
 
 app.post('/insert', (req, res) => {
