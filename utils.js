@@ -26,42 +26,43 @@ function createTableIfNotExists() {
         )`);
 }
 
-function checkData(obj) {
-    if (typeof obj.project_name !== 'string') {
+function checkData(obj, res) {
+    if (!isNaN(obj.project_name)) {
         console.log("Project_name is not a string");
+        res.send("Project_name is not a string");
         return "NOK";
-    }
-    if (typeof obj.start_date !== 'number') {
+    } else if (isNaN(obj.start_date)) {
         console.log("Start_date is not a number");
+        res.send("Start_date is not a number");
         return "NOK";
-    }
-    if (typeof obj.target_end_date !== 'number') {
+    } else if (isNaN(obj.target_end_date)) {
         console.log("Target_end_date is not a number");
+        res.send("Target_end_date is not a number");
         return "NOK";
-    }
-    if (typeof obj.actual_end_date !== 'number') {
+    } else if (isNaN(obj.actual_end_date)) {
         console.log("Actual_end_date is not a number");
+        res.send("Actual_end_date is not a number");
         return "NOK";
-    }
-    if (typeof obj.created_on !== 'number') {
+    } else if (isNaN(obj.created_on)) {
         console.log("Created_on is not a number");
+        res.send("Created_on is not a number");
         return "NOK";
-    }
-    if (typeof obj.created_by !== 'string') {
+    } else if (!isNaN(obj.created_by)) {
         console.log("Created_by is not a string");
+        res.send("Created_by is not a string");
         return "NOK";
-    }
-    if (typeof obj.modified_on !== 'number') {
+    } else if (isNaN(obj.modified_on)) {
         console.log("Modified_on is not a number");
+        res.send("Modified_on is not a number");
         return "NOK";
-    }
-    if (typeof obj.modified_by !== 'string') {
+    } else if (!isNaN(obj.modified_by)) {
         console.log("Modified_by is not a string");
+        res.send("Modified_by is not a string");
         return "NOK";
+    } else {
+        console.log("Check data types successfully!");
+        return "OK";
     }
-
-    console.log("Check data types successfully!");
-    return "OK";
 }
 
 exports.insertDummyData = () => {
@@ -76,7 +77,7 @@ exports.insertDummyData = () => {
         modified_by: "Bogdan modifify"
     };
 
-    if (checkData(dummyData) === "OK") {
+    if (checkData(dummyData, null) === "OK") {
         db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
             created_on, created_by, modified_on, modified_by) VALUES
             ('${dummyData.project_name}', '${dummyData.start_date}', '${dummyData.target_end_date}',
@@ -90,7 +91,7 @@ exports.insertDummyData = () => {
 };
 
 exports.insertData = (project_name, start_date, target_end_date, actual_end_date,
-                      created_on, created_by, modified_on, modified_by) => {
+                      created_on, created_by, modified_on, modified_by, res) => {
     let testObj = {
         project_name: project_name,
         start_date: start_date,
@@ -101,19 +102,27 @@ exports.insertData = (project_name, start_date, target_end_date, actual_end_date
         modified_on: modified_on,
         modified_by: modified_by
     };
-    if (checkData(testObj) === "OK") {
+    console.log(testObj);
+    if (checkData(testObj, res) === "OK") {
         db.run(`INSERT INTO it_projects(project_name, start_date, target_end_date, actual_end_date,
             created_on, created_by, modified_on, modified_by) VALUES
             ('${project_name}', '${start_date}', '${target_end_date}',
             '${actual_end_date}', '${created_on}', '${created_by}',
-            '${modified_on}', '${modified_by}')`);
+            '${modified_on}', '${modified_by}')`, (err) => {
+            if (err) {
+                console.log(`Error adding project "${project_name}" ${err}`);
+            } else {
+                console.log(`Successfully added project "${project_name}"`);
+                res.send(`Successfully added project "${project_name}"`)
+            }});
     } else {
         console.log("Row invalid");
+        res.send("Inavlid insert");
     }
 };
 
 exports.updateData = (old_project_name, project_name, start_date, target_end_date, actual_end_date,
-    created_on, created_by, modified_on, modified_by) => {
+    created_on, created_by, modified_on, modified_by, res) => {
     let testObj = {
         project_name: project_name,
         start_date: start_date,
@@ -124,7 +133,7 @@ exports.updateData = (old_project_name, project_name, start_date, target_end_dat
         modified_on: modified_on,
         modified_by: modified_by
     };
-    if (checkData(testObj) === "OK") {
+    if (checkData(testObj, res) === "OK") {
         db.run(`UPDATE it_projects SET
         project_name='${project_name}',
         start_date=${start_date},
@@ -134,18 +143,28 @@ exports.updateData = (old_project_name, project_name, start_date, target_end_dat
         created_by='${created_by}',
         modified_on=${modified_on},
         modified_by='${modified_by}'
-        WHERE project_name LIKE '${old_project_name}'`)
+        WHERE project_name LIKE '${old_project_name}'`, (err) => {
+            if (err) {
+                console.log(`Error updating project "${project_name}" ${err}`);
+            } else {
+                console.log(`Successfully updated project "${project_name}"`);
+                res.send(`Successfully updated project "${project_name}"`)
+            }
+        })
     } else {
         console.log("Row invalid");
     }
 };
 
-exports.deleteProject = (project_name) => {
+exports.deleteProject = (project_name, res) => {
     db.run(`DELETE FROM it_projects WHERE project_name LIKE '${project_name}'`, (err) => {
         if (err) {
             console.log(`Error deleting project "${project_name}" ${err}`);
+            res.send(`Error deleting project "${project_name}" ${err}`);
+
         } else {
             console.log(`Successfully deleted project "${project_name}"`);
+            res.send(`Successfully deleted project "${project_name}"`);
         }
     })
 };
